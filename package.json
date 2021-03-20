@@ -1,0 +1,27 @@
+{
+  "name": "iot-serverless",
+  "version": "1.0.0",
+  "description": "A serverless repo for manage file upload and download",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pot-IoT/iot-serverless.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pot-IoT/iot-serverless/issues"
+  },
+  "homepage": "https://github.com/Pot-IoT/iot-serverless#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "serverless-http": "^2.7.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^6.8.0"
+  }
+}

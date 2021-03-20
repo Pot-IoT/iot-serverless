@@ -1,0 +1,21 @@
+service: iot-serverless
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    noPrependStageInUrl: true
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: eu-west-2
+
+functions:
+  app:
+    handler: index.handler
+    events:
+      - http: ANY /
+      - http: "ANY {proxy+}"
