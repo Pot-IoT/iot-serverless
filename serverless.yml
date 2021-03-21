@@ -9,9 +9,12 @@ custom:
 
 provider:
   name: aws
-  runtime: nodejs12.x
-  stage: dev
+  deploymentBucket:
+    name: iot-automation
+  profile: saml
   region: eu-west-2
+  runtime: nodejs14.x
+  stage: prod
 
 functions:
   app:
