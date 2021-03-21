@@ -3,11 +3,12 @@ const express = require("express");
 const app = express();
 
 app.get("/", function (req, res) {
-  res.send("Hello World!");
+  res.send("Welcome to POT-IOT!");
 });
 
-app.get("/upload", function (req, res) {
-  res.send("upload");
+app.post("/upload", function (req, res) {
+  const data = req.apiGateway.event.body;
+  res.send(data);
 });
 
 app.get("/download", function (req, res) {
