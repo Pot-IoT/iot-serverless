@@ -1,5 +1,9 @@
-const serverless = require("serverless-http");
 const express = require("express");
+const formidable = require("formidable");
+const serverless = require("serverless-http");
+
+const { validateData, uploadStream } = require("./helpers");
+
 const app = express();
 
 app.get("/", function (req, res) {
@@ -7,8 +11,21 @@ app.get("/", function (req, res) {
 });
 
 app.post("/upload", function (req, res) {
-  const data = req.apiGateway.event.body;
-  res.send(data);
+  const form = formidable({ fileWriteStreamHandler: uploadStream });
+  form.parse(req, (err, fields, files) => {
+    const { error, message } = validateData(fields, files);
+
+    if (error) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error, message }));
+      return;
+    }
+
+    res.writeHead(200);
+    res.end(JSON.stringify({ fields, files }));
+  });
+
+  return;
 });
 
 app.get("/download", function (req, res) {

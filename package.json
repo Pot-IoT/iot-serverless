@@ -19,6 +19,8 @@
   "homepage": "https://github.com/Pot-IoT/iot-serverless#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "formidable": "github:node-formidable/formidable#master",
+    "ramda": "^0.27.1",
     "serverless-http": "^2.7.0"
   },
   "devDependencies": {
