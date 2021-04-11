@@ -34,8 +34,9 @@ const validateData = (fields, files) => {
   };
 };
 
-const uploadStream = (file) => {
+const uploadStream = (res) => (file) => {
   const pass = PassThrough();
+  console.log("file", file);
   s3.upload(
     {
       Bucket: "iot-bastille",
@@ -44,6 +45,8 @@ const uploadStream = (file) => {
     },
     (err, data) => {
       console.log(err, data);
+      res.writeHead(200);
+      res.end(JSON.stringify({ error: false, message: "Upload Succeessful." }));
     }
   );
 

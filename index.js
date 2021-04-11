@@ -11,7 +11,7 @@ app.get("/", function (req, res) {
 });
 
 app.post("/upload", function (req, res) {
-  const form = formidable({ fileWriteStreamHandler: uploadStream });
+  const form = formidable({ fileWriteStreamHandler: uploadStream(res) });
   form.parse(req, (err, fields, files) => {
     const { error, message } = validateData(fields, files);
 
@@ -20,9 +20,6 @@ app.post("/upload", function (req, res) {
       res.end(JSON.stringify({ error, message }));
       return;
     }
-
-    res.writeHead(200);
-    res.end(JSON.stringify({ fields, files }));
   });
 
   return;
