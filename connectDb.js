@@ -1,7 +1,7 @@
 const AWS = require("aws-sdk");
 const mysql = require("mysql");
 
-const secretsManager = new AWS.SecretsManager({ region: "ap-east-1" });
+const secretsManager = new AWS.SecretsManager({ region: "eu-west-2" });
 
 const connectDb = () => {
   const promise = new Promise((resolve, reject) => {
