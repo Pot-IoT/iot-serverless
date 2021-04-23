@@ -20,10 +20,12 @@
   "dependencies": {
     "express": "^4.17.1",
     "formidable": "github:node-formidable/formidable#master",
+    "mysql": "^2.18.1",
     "ramda": "^0.27.1",
     "serverless-http": "^2.7.0"
   },
   "devDependencies": {
+    "nodemon": "^2.0.7",
     "serverless-offline": "^6.8.0"
   }
 }
