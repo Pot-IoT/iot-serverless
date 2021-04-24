@@ -48,6 +48,45 @@ const checkHeaders = (headers) => {
   return promise;
 };
 
+const checkFields = ({ deviceId, privateKey }) => {
+  if (missingField(deviceId)) {
+    return {
+      error: true,
+      message: "Device ID is required.",
+    };
+  }
+
+  if (missingField(privateKey)) {
+    return {
+      error: true,
+      message: "Private Key is required.",
+    };
+  }
+
+  const promise = new Promise((resolve, reject) => {
+    connectDb().then((connection) => {
+      connection.query(
+        `select imei from user_device where imei ='${deviceId}';`,
+        (err, rows) => {
+          if (err) reject(err);
+
+          rows.length === 0
+            ? resolve({
+                error: true,
+                message: "Device ID not found.",
+              })
+            : resolve({
+                error: false,
+                message: "",
+              });
+        }
+      );
+    });
+  });
+
+  return promise;
+};
+
 const validateData = (files) => {
   if (missingField(files.file)) {
     return {
@@ -100,8 +139,15 @@ const getDownloadUrl = (fileName) => {
   return s3.getSignedUrlPromise("getObject", params);
 };
 
+const getUploadUrl = (fileName) => {
+  const params = { Bucket: "iot-bastille", Key: fileName, Expires: 300 };
+  return s3.getSignedUrlPromise("putObject", params);
+};
+
+exports.checkFields = checkFields;
 exports.checkHeaders = checkHeaders;
 exports.getDownloadUrl = getDownloadUrl;
+exports.getUploadUrl = getUploadUrl;
 exports.listFiles = listFiles;
 exports.uploadStream = uploadStream;
 exports.validateData = validateData;
