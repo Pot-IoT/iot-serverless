@@ -1,3 +1,4 @@
+const cors = require("cors");
 const express = require("express");
 const formidable = require("formidable");
 const serverless = require("serverless-http");
@@ -13,6 +14,7 @@ const {
 } = require("./helpers");
 
 const app = express();
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Welcome to POT-IOT!");
@@ -69,7 +71,9 @@ app.get("/fileList", (req, res) => {
 });
 
 app.get("/download/:fileName", (req, res) => {
-  getDownloadUrl(req.params.fileName).then((url) => {
+  const fileName = req.params.fileName;
+
+  getDownloadUrl(fileName).then((url) => {
     res.send({ url });
   });
 });
