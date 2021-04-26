@@ -3,44 +3,13 @@ const express = require("express");
 const formidable = require("formidable");
 const serverless = require("serverless-http");
 
-const {
-  checkFields,
-  checkHeaders,
-  getDownloadUrl,
-  getUploadUrl,
-  listFiles,
-  uploadStream,
-  validateData,
-} = require("./helpers");
+const { checkFields, getUploadUrl, listFiles } = require("./helpers");
 
 const app = express();
 app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Welcome to POT-IOT!");
-});
-
-app.post("/upload", (req, res) => {
-  checkHeaders(req.headers).then(({ error, message }) => {
-    if (error) {
-      res.writeHead(400, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error, message }));
-      return;
-    }
-
-    const form = formidable({ fileWriteStreamHandler: uploadStream(req, res) });
-    form.parse(req, (err, fields, files) => {
-      const { error, message } = validateData(files);
-
-      if (error) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error, message }));
-        return;
-      }
-
-      return;
-    });
-  });
 });
 
 app.post("/uploadUrl", (req, res) => {
@@ -52,7 +21,7 @@ app.post("/uploadUrl", (req, res) => {
         res.end(JSON.stringify({ error, message }));
       }
 
-      getUploadUrl(fields.deviceId)
+      getUploadUrl(fields)
         .then((url) => {
           res.send({ url });
         })
@@ -64,17 +33,10 @@ app.post("/uploadUrl", (req, res) => {
   });
 });
 
-app.get("/fileList", (req, res) => {
-  listFiles().then((filesInfo) => {
+app.get("/fileList/:deviceId", (req, res) => {
+  const deviceId = req.params.deviceId;
+  listFiles(deviceId).then((filesInfo) => {
     res.send(filesInfo);
-  });
-});
-
-app.get("/download/:fileName", (req, res) => {
-  const fileName = req.params.fileName;
-
-  getDownloadUrl(fileName).then((url) => {
-    res.send({ url });
   });
 });
 
