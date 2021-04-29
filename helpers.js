@@ -26,14 +26,13 @@ const checkFields = ({ deviceId, privateKey }) => {
   const promise = new Promise((resolve, reject) => {
     connectDb().then((connection) => {
       connection.query(
-        `select imei from user_device where imei ='${deviceId}';`,
+        `SELECT * FROM user_device WHERE imei ='${deviceId}' AND private_key = '${privateKey}' AND isdelete = 0;`,
         (err, rows) => {
           if (err) reject(err);
-
           rows.length === 0
             ? resolve({
                 error: true,
-                message: "Device ID not found.",
+                message: "Device ID or Private Key is invalid.",
               })
             : resolve({
                 error: false,

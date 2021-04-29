@@ -21,16 +21,16 @@ app.post("/uploadUrl", (req, res) => {
       if (error) {
         res.writeHead(400, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error, message }));
+      } else {
+        getUploadUrl(fields)
+          .then((url) => {
+            res.send({ url });
+          })
+          .catch((err) => {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: true, message: err }));
+          });
       }
-
-      getUploadUrl(fields)
-        .then((url) => {
-          res.send({ url });
-        })
-        .catch((err) => {
-          res.writeHead(400, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ error: true, message: err }));
-        });
     });
   });
 });
