@@ -85,5 +85,6 @@ const getUploadUrl = ({ deviceId, fileType = "csv" }) => {
 };
 
 exports.checkFields = checkFields;
+exports.missingField = missingField;
 exports.getUploadUrl = getUploadUrl;
 exports.listFiles = listFiles;

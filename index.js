@@ -3,10 +3,12 @@ const express = require("express");
 const formidable = require("formidable");
 const serverless = require("serverless-http");
 
+const { authentication } = require("./middleware");
 const { checkFields, getUploadUrl, listFiles } = require("./helpers");
 
 const app = express();
 app.use(cors());
+app.use(authentication);
 
 app.get("/", (req, res) => {
   res.send("Welcome to POT-IOT!");

@@ -23,6 +23,7 @@
     "formidable": "github:node-formidable/formidable#master",
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
+    "node-fetch": "^2.6.1",
     "ramda": "^0.27.1",
     "serverless-http": "^2.7.0"
   },
