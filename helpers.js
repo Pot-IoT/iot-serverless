@@ -48,28 +48,26 @@ const checkFields = ({ deviceId, privateKey }) => {
 
 const listFiles = async (deviceId) => {
   const params = { Bucket: "iot-bastille", Prefix: deviceId };
-  const filesInfo = await s3.listObjectsV2(params).promise();
+  const s3Files = await s3.listObjectsV2(params).promise();
+  const contents = pathOr([], ["Contents"], s3Files);
+  const filesInfo = contents.map(({ Key, LastModified, Size }) => ({
+    fileName: Key.split("/")[1],
+    lastModified: LastModified,
+    size: Size,
+  }));
 
-  const contents = pathOr([], ["Contents"], filesInfo).map(
-    ({ Key, LastModified, Size }) => ({
-      fileName: Key.split("/")[1],
-      lastModified: LastModified,
-      size: Size,
-    })
-  );
-
-  const urlPromises = contents.map(({ fileName }) => getDownloadUrl(fileName));
+  const urlPromises = contents.map(({ Key }) => getDownloadUrl(Key));
 
   const urls = await Promise.all(urlPromises);
 
   return urls.map((url, index) => ({
     url,
-    ...contents[index],
+    ...filesInfo[index],
   }));
 };
 
-const getDownloadUrl = (fileName) => {
-  const params = { Bucket: "iot-bastille", Key: fileName, Expires: 3000 };
+const getDownloadUrl = (Key) => {
+  const params = { Bucket: "iot-bastille", Key, Expires: 3000 };
   return s3.getSignedUrlPromise("getObject", params);
 };
 
