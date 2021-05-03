@@ -4,11 +4,17 @@ const formidable = require("formidable");
 const serverless = require("serverless-http");
 
 const { authentication } = require("./middleware");
-const { checkFields, getUploadUrl, listFiles } = require("./helpers");
+const {
+  checkFields,
+  deleteFile,
+  getUploadUrl,
+  listFiles,
+} = require("./helpers");
 
 const app = express();
 app.use(cors());
 app.use("/fileList/:deviceId", authentication);
+app.use("/fileList/:deviceId/:fileName", authentication);
 
 app.get("/", (req, res) => {
   res.send("Welcome to POT-IOT!");
@@ -40,6 +46,12 @@ app.get("/fileList/:deviceId", (req, res) => {
   listFiles(deviceId).then((filesInfo) => {
     res.send(filesInfo);
   });
+});
+
+app.delete("/fileList/:deviceId/:fileName", (req, res) => {
+  const deviceId = req.params.deviceId;
+  const fileName = req.params.fileName;
+  deleteFile(deviceId, fileName, res);
 });
 
 module.exports.handler = serverless(app);

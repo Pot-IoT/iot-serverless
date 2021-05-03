@@ -81,7 +81,26 @@ const getUploadUrl = ({ deviceId, fileType = "csv" }) => {
   return s3.getSignedUrlPromise("putObject", params);
 };
 
+const deleteFile = async (deviceId, fileName, res) => {
+  const params = {
+    Bucket: "iot-bastille",
+    Key: `${deviceId}/${fileName}`,
+  };
+
+  s3.deleteObject(params, (err) => {
+    if (err) {
+      res.send({ error: true, message: err });
+    } else {
+      res.send({
+        error: false,
+        message: "Delete Successful.",
+      });
+    }
+  });
+};
+
 exports.checkFields = checkFields;
-exports.missingField = missingField;
+exports.deleteFile = deleteFile;
 exports.getUploadUrl = getUploadUrl;
 exports.listFiles = listFiles;
+exports.missingField = missingField;
