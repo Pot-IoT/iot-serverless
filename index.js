@@ -8,7 +8,7 @@ const { checkFields, getUploadUrl, listFiles } = require("./helpers");
 
 const app = express();
 app.use(cors());
-app.use(authentication);
+app.use("/fileList/:deviceId", authentication);
 
 app.get("/", (req, res) => {
   res.send("Welcome to POT-IOT!");
