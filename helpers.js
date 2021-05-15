@@ -5,8 +5,16 @@ const moment = require("moment");
 const { connectDb } = require("./connectDb");
 
 const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
-
+const ONE_GIGABYTE = 1024 * 1024 * 1024;
 const missingField = (field) => isEmpty(field) || isNil(field);
+
+const getS3Files = async (deviceId) => {
+  const params = { Bucket: "iot-bastille", Prefix: deviceId };
+  const s3Files = await s3.listObjectsV2(params).promise();
+  const contents = pathOr([], ["Contents"], s3Files);
+
+  return contents;
+};
 
 const checkFields = ({ deviceId, privateKey }) => {
   if (missingField(deviceId)) {
@@ -46,10 +54,18 @@ const checkFields = ({ deviceId, privateKey }) => {
   return promise;
 };
 
+const checkFolderSize = async ({ deviceId }) => {
+  const contents = await getS3Files(deviceId);
+  const fileSize = contents.reduce((sum, { Size }) => {
+    sum = sum + Size;
+    return sum;
+  }, 0);
+
+  return fileSize > ONE_GIGABYTE ? true : false;
+};
+
 const listFiles = async (deviceId) => {
-  const params = { Bucket: "iot-bastille", Prefix: deviceId };
-  const s3Files = await s3.listObjectsV2(params).promise();
-  const contents = pathOr([], ["Contents"], s3Files);
+  const contents = await getS3Files(deviceId);
   const filesInfo = contents.map(({ Key, LastModified, Size }) => ({
     fileName: Key.split("/")[1],
     lastModified: LastModified,
@@ -100,6 +116,7 @@ const deleteFile = async (deviceId, fileName, res) => {
 };
 
 exports.checkFields = checkFields;
+exports.checkFolderSize = checkFolderSize;
 exports.deleteFile = deleteFile;
 exports.getUploadUrl = getUploadUrl;
 exports.listFiles = listFiles;

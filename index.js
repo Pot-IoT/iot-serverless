@@ -6,6 +6,7 @@ const serverless = require("serverless-http");
 const { authentication } = require("./middleware");
 const {
   checkFields,
+  checkFolderSize,
   deleteFile,
   getUploadUrl,
   listFiles,
@@ -28,14 +29,27 @@ app.post("/uploadUrl", (req, res) => {
         res.writeHead(400, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error, message }));
       } else {
-        getUploadUrl(fields)
-          .then((url) => {
-            res.send({ url });
-          })
-          .catch((err) => {
+        checkFolderSize(fields).then((isOversized) => {
+          if (isOversized) {
             res.writeHead(400, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ error: true, message: err }));
-          });
+            res.end(
+              JSON.stringify({
+                error: true,
+                message:
+                  "Total file size for this device is over 1G. Please delete some files.",
+              })
+            );
+          } else {
+            getUploadUrl(fields)
+              .then((url) => {
+                res.send({ url });
+              })
+              .catch((err) => {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: true, message: err }));
+              });
+          }
+        });
       }
     });
   });
