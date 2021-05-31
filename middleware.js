@@ -14,7 +14,7 @@ const authentication = (req, res, next) => {
     return;
   }
 
-  fetch(`http://115.29.191.198:8080/login?token=${token}`)
+  fetch(`https://api.pot-iot.com/login?token=${token}`)
     .then((data) => data.json())
     .then((json) => {
       const validToken = pathOr(false, ["success"], json);

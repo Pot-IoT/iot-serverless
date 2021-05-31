@@ -6,6 +6,9 @@ plugins:
 custom:
   serverless-offline:
     noPrependStageInUrl: true
+  apiGatewayThrottling:
+    maxRequestsPerSecond: 10
+    maxConcurrentRequests: 5
 
 provider:
   name: aws
@@ -14,7 +17,8 @@ provider:
   profile: saml
   region: eu-west-2
   runtime: nodejs12.x
-  stage: prod
+  environment:
+    STAGE: ${opt:stage, "dev"}
 
 functions:
   app:
