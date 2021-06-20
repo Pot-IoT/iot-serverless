@@ -3,6 +3,8 @@ const { pathOr } = require("ramda");
 
 const { missingField } = require("./helpers");
 
+const stage = process.env.STAGE;
+
 const authentication = (req, res, next) => {
   const token = req.headers.authorization;
   const missToken = missingField(token);
@@ -14,7 +16,12 @@ const authentication = (req, res, next) => {
     return;
   }
 
-  fetch(`https://api.pot-iot.com/login?token=${token}`)
+  const apiUrl =
+    stage === "dev"
+      ? `https://dev.api.pot-iot.com/login?token=${token}`
+      : `https://api.pot-iot.com/login?token=${token}`;
+
+  fetch(apiUrl)
     .then((data) => data.json())
     .then((json) => {
       const validToken = pathOr(false, ["success"], json);
